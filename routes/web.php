@@ -16,3 +16,5 @@ Route::get('/', function () {
 });
 
 Route::get('/laravel-firebase','FirebaseController@index');
+
+Route::get('/firebase', 'FirebaseController@firebaseClient');

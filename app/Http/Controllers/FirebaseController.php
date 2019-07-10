@@ -21,4 +21,9 @@ class FirebaseController extends Controller
 
         return \response()->json($newPost->getValue());
     }
+
+    public function firebaseClient()
+    {
+        return view('firebase');
+    }
 }
