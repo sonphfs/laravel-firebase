@@ -51,7 +51,7 @@ return [
             'database' => env('DB_DATABASE', 'laravel_firebase'),
             'username' => env('DB_USERNAME', 'sonphfs'),
             'password' => env('DB_PASSWORD', 'phpmyadmin'),
-            'unix_socket' => env('DB_SOCKET', 'phpmyadmin'),
+            'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
