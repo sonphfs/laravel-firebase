@@ -15,7 +15,7 @@
 </head>
 <body>
     <div id="messgesDiv">
-        <center><h3>Message</h3></center>
+        <h1 style="text-align: center">Heroku</h1>
     </div>
     <div style="margin-top: 20px;">
         <input class="form-control" type="text" id="nameInput" placeholder="Name">
@@ -51,12 +51,6 @@
                     } else {
                         console.log('Lỗi xác thực');
                     }
-            });
-            firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-            // Send token to your backend via HTTPS
-            // ...
-            }).catch(function(error) {
-            // Handle error
             });
         })();
 

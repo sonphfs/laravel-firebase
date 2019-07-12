@@ -10,17 +10,20 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/laravel-firebase','FirebaseController@index');
-
-Route::get('/firebase', 'FirebaseController@firebaseClient');
-
-Route::get('/create-user', 'FirebaseController@createUser');
-Route::get('/create-user-by-id', 'FirebaseController@createUserById');
-Route::get('/update-user/{id}', 'FirebaseController@updateUser');
-Route::get('/user-info/{id}', 'FirebaseController@getUserInfo');
-Route::get('/auth/{id}', 'FirebaseController@auth');
+Route::group(['middleware' => 'auth'], function(){
+    Route::get('/laravel-firebase','FirebaseController@index');
+    Route::get('/firebase', 'FirebaseController@firebaseClient');
+    Route::get('/create-user', 'FirebaseController@createUser');
+    Route::get('/create-user-by-id', 'FirebaseController@createUserById');
+    Route::get('/update-user/{id}', 'FirebaseController@updateUser');
+    Route::get('/user-info/{id}', 'FirebaseController@getUserInfo');
+    Route::get('/auth/{id}', 'FirebaseController@auth');
+});
