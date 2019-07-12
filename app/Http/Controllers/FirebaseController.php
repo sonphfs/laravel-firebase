@@ -97,6 +97,13 @@ class FirebaseController extends Controller
 
     }
 
+    private function _hasUserOnFirebase($uid)
+    {
+        if($this->_auth->getUser($uid))
+            return true;
+        return false;
+    }
+
     private function _generateToken($uid)
     {
         $additionalClaims = [
@@ -105,7 +112,7 @@ class FirebaseController extends Controller
         $customToken = $this->_auth->createCustomToken($uid, $additionalClaims);
         $customTokenString = (string) $customToken;
 
-        return \response()->json($customTokenString);
+        return $customTokenString;
     }
 
     private function _hasData($data)
