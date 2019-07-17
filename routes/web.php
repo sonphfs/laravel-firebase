@@ -24,9 +24,12 @@ Route::get('/check', function(){
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/laravel-firebase','FirebaseController@index');
     Route::get('/firebase', 'FirebaseController@firebaseClient');
+    Route::post('/send-message', 'FirebaseController@sendMessage');
     Route::get('/create-user', 'FirebaseController@createUser');
-    Route::get('/create-user-by-id', 'FirebaseController@createUserById');
+    Route::get('/create-user-by-id/{id}', 'FirebaseController@createUserById');
     Route::get('/update-user/{id}', 'FirebaseController@updateUser');
     Route::get('/user-info/{id}', 'FirebaseController@getUserInfo');
     Route::get('/auth/{id}', 'FirebaseController@auth');
+    Route::get('/list-users', 'FirebaseController@getListUsers');
+    Route::get('/logout', 'FirebaseController@logout');
 });
