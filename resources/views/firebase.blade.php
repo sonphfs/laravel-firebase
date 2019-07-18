@@ -80,8 +80,9 @@
                   </div>
 
                   <p class="text-center top_spac"> Design by <a target="_blank" href="#">Sunil Rajput</a></p>
-                </div></div>
-                <div style="text-align: center"><button class="btn" onclick="logout()">Logout Chatroom</button></div>
+                </div>
+                <div style="text-align: center; margin-bottom: 50px;"><button class="btn" onclick="logout()">Logout Chatroom</button></div>
+            </div>
             <input type="hidden" data-token="{{$token}}">
     <script>
         (function(){
@@ -154,14 +155,14 @@
                 var outgoing_msg = `<div class="outgoing_msg">
                                         <div class="sent_msg">
                                         <p>` + data.message + `
-                                        <span class="time_date"> 11:01 AM    |    Today</span> </div>
+                                        <span class="time_date"> ` + getTime(data.time) + `     |` + isToday(data.time) +`</span> </div>
                                     </div>`;
                 var incoming_msg = `<div class="incoming_msg">
                                         <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                                             <div class="received_msg">
                                                 <div class="received_withd_msg">
                                                     <p>` + data.message + `</p>
-                                            <span class="time_date"> 11:01 AM    |    Today</span>
+                                            <span class="time_date"> ` + getTime(data.time) + `     | ` + isToday(data.time) +`</span>
                                             </div>
                                         </div>
                                     </div>`;
@@ -174,6 +175,13 @@
                 $('.msg_history')[0].scrollTop = $('.msg_history')[0].scrollHeight;
             }
         })();
+
+        var newMessage = function() {
+            firebase.database().ref('ChatRoom').orderByKey().limitToLast(1).on('child_added',function(snapshot) {
+                console.log('new record', snapshot.val().message);
+                return snapshot.val();
+            });
+        }
         var logout = function(){
             firebase.auth().signOut().then(function() {
                 console.log('Sign-out successful.');
@@ -181,6 +189,16 @@
                 }, function(error) {
                 // An error happened.
             });
+        }
+        var isToday = function(timetamp){
+            var date = new Date(timetamp);
+            var today = new Date();
+            return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear() ? "  Today" : "";
+        }
+
+        var getTime = function(timetamp) {
+            var date = new Date(timetamp);
+            return date.getHours() + ":" + date.getMinutes();
         }
         </script>
 </body>

@@ -53,8 +53,12 @@ class FirebaseController extends Controller
 
     private function _sendMessageToFirebase(string $newMessage)
     {
-        $userId = Auth::id();
-        $sendData = $this->_database->getReference('ChatRoom')->push(['user_id' => $userId , 'message' => $newMessage]);
+        $data = [
+            'user_id' => Auth::id(),
+            'message' => $newMessage,
+            'time' => time() * 1000
+        ];
+        $sendData = $this->_database->getReference('ChatRoom')->push($data);
         return \response()->json($sendData->getValue());
     }
 
