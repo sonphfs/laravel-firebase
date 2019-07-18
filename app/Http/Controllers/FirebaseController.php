@@ -62,6 +62,21 @@ class FirebaseController extends Controller
         return \response()->json($sendData->getValue());
     }
 
+    public function loadMessageFromFirebase()
+    {
+        $messages = $this->_database->getReference('Groups')->orderByChild('members')->equalTo('1')->getSnapshot()->getValue();
+        // $data = [];
+        // foreach($messages as $key => $item) {
+        //    $data[$key] = [
+        //        'message' => $item['message'],
+        //        'time' => $item['time'],
+        //        'user_id' => $item['user_id']
+        //    ];
+        // }
+        dd($messages);
+
+    }
+
     public function createUser()
     {
         $userProperties = [

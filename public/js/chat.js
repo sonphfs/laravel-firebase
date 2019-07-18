@@ -22,4 +22,14 @@ $('document').ready(function(){
             });
         }
     });
+    var lastScrollTop = 0;
+    $('.msg_history').on('scroll', function(e){
+        st = $(this).scrollTop();
+        if(st == 0) {
+            console.log('up 1');
+        }
+        else {
+            // console.log('down 1');
+        }
+    });
 });

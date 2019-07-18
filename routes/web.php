@@ -32,4 +32,5 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/auth/{id}', 'FirebaseController@auth');
     Route::get('/list-users', 'FirebaseController@getListUsers');
     Route::get('/logout', 'FirebaseController@logout');
+    Route::get('/load-message-from-firebase', 'FirebaseController@loadMessageFromFirebase');
 });
