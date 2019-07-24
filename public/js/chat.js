@@ -7,12 +7,13 @@ $('document').ready(function(){
       });
     $('#chat-msg').keypress(function(){
         let keycode = event.which;
+        var baseUrl = window.location.protocol + "//" + window.location.host;
         if(keycode == '13'){
             let msg = $('#chat-msg').val();
             $('#chat-msg').val('');
             $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8001/send-message',
+                url: baseUrl + '/send-message',
                 data: {
                     "msg" : msg
                 },
