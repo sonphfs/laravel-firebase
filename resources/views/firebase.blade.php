@@ -146,33 +146,108 @@
             }
 
             var starCountRef = firebase.database().ref('ChatRoom');
-            starCountRef.on('child_added', function(snapshot) {
-                var data = snapshot.val()
-                var currentId = firebase.auth().currentUser.uid;
-                displayMessage(data, currentId);
-            });
+            var page = 1;
+            var per_page = 2;
+            var lastKey = 'aa';
+            var lazyLoadingMessage = function(messages, currentId) {
+                messages = messages.reverse();
+                messages.forEach(function(data){
+                    var outgoing_msg;
+                    var incoming_msg;
+                    if(currentId == data.user_id){
+                        outgoing_msg = `<div class="outgoing_msg">
+                                            <div class="sent_msg">
+                                            <p>` + data.message + `
+                                            <span class="time_date"> ` + getTime(data.time) + `     |` + isToday(data.time) +`</span> </div>
+                                        </div>`;
+                        $('.msg_history').prepend(outgoing_msg);
+                    }
+                    else {
+                        incoming_msg = `<div class="incoming_msg">
+                                            <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                                <div class="received_msg">
+                                                    <div class="received_withd_msg">
+                                                        <p>` + data.message + `</p>
+                                                <span class="time_date"> ` + getTime(data.time) + `     | ` + isToday(data.time) +`</span>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                        $('.msg_history').prepend(incoming_msg);
+                    }
+                });
+            }
+
+            var renderMessages = async function(){
+                var arrMessages = Array();
+                var currentId;
+                var query;
+                if(lastKey){
+                    query = starCountRef.orderByKey().endAt(lastKey).limitToLast(per_page);
+                } else {
+                    query = starCountRef.orderByKey().limitToLast(per_page);
+                }
+                starCountRef.on('child_added', function(snapshot) {
+                    currentId = firebase.auth().currentUser.uid;
+                    var data = snapshot.val();
+                    arrMessages.push(data);
+                    displayMessage(data, currentId);
+                    // ref.off();
+                });
+                console.log(arrMessages);
+                lazyLoadingMessage(arrMessages, currentId);
+            }
+
+            renderMessages();
+
             var displayMessage = function(data, currentId){
-                var outgoing_msg = `<div class="outgoing_msg">
+                var outgoing_msg;
+                var incoming_msg;
+                if(currentId == data.user_id){
+                    outgoing_msg = `<div class="outgoing_msg">
                                         <div class="sent_msg">
                                         <p>` + data.message + `
-                                        <span class="time_date"> ` + getTime(data.time) + `     |` + isToday(data.time) +`</span> </div>
+                                        <span class="time_date" style="color: #EEE">` + getTime(data.time) + isToday(data.time) +`</span> </div>
                                     </div>`;
-                var incoming_msg = `<div class="incoming_msg">
+                    $('.msg_history').append(outgoing_msg);
+                }
+                else {
+                    incoming_msg = `<div class="incoming_msg">
                                         <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                                             <div class="received_msg">
                                                 <div class="received_withd_msg">
                                                     <p>` + data.message + `</p>
-                                            <span class="time_date"> ` + getTime(data.time) + `     | ` + isToday(data.time) +`</span>
+                                            <span class="time_date"> ` + getTime(data.time) + isToday(data.time) +`</span>
                                             </div>
                                         </div>
                                     </div>`;
-                if(currentId == data.user_id){
-                    $('.msg_history').append(outgoing_msg);
-                }
-                else {
                     $('.msg_history').append(incoming_msg);
                 }
                 $('.msg_history')[0].scrollTop = $('.msg_history')[0].scrollHeight;
+            }
+
+            var loadingMessage = function(data, currentId) {
+                var outgoing_msg;
+                var incoming_msg;
+                if(currentId == data.user_id){
+                    outgoing_msg = `<div class="outgoing_msg">
+                                        <div class="sent_msg">
+                                        <p>` + data.message + `
+                                        <span class="time_date" style="color: #EEE"> ` + getTime(data.time) + isToday(data.time) +`11</span> </div>
+                                    </div>`;
+                    $('.msg_history').prepend(outgoing_msg);
+                }
+                else {
+                    incoming_msg = `<div class="incoming_msg">
+                                        <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                            <div class="received_msg">
+                                                <div class="received_withd_msg">
+                                                    <p>` + data.message + `</p>
+                                            <span class="time_date"> ` + getTime(data.time) + isToday(data.time) +`</span>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                    $('.msg_history').prepend(incoming_msg);
+                }
             }
         })();
 
@@ -193,7 +268,7 @@
         var isToday = function(timetamp){
             var date = new Date(timetamp);
             var today = new Date();
-            return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear() ? "  Today" : "";
+            return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear() ? "|  Today" : "";
         }
 
         var getTime = function(timetamp) {

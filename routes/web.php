@@ -20,6 +20,7 @@ Route::get('/', function () {
 Route::get('/check', function(){
     return "deploying with Git";
 });
+Route::get('/firebase-client', 'FirebaseController@testClient');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/laravel-firebase','FirebaseController@index');

@@ -64,17 +64,12 @@ class FirebaseController extends Controller
 
     public function loadMessageFromFirebase()
     {
-        $messages = $this->_database->getReference('Groups')->orderByChild('members')->equalTo('1')->getSnapshot()->getValue();
-        // $data = [];
-        // foreach($messages as $key => $item) {
-        //    $data[$key] = [
-        //        'message' => $item['message'],
-        //        'time' => $item['time'],
-        //        'user_id' => $item['user_id']
-        //    ];
-        // }
-        dd($messages);
-
+        $lastMessage = request()->lastMessage;
+        $messages = $this->_database->getReference('ChatRoom')->orderByKey()->endAt('-Lk7vIkjvQgEyI8rOMUx')->limitToLast(5)->getSnapshot()->getValue();
+        if(!empty($messages)) {
+            return  array_reverse($messages, true);
+        }
+        return "failed";
     }
 
     public function createUser()
@@ -174,5 +169,10 @@ class FirebaseController extends Controller
     {
         Auth::logout();
         return \redirect('/firebase');
+    }
+
+    public function testClient()
+    {
+        return view('firebase-client');
     }
 }
