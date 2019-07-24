@@ -8,6 +8,7 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Database;
 use App\User;
+use Auth;
 
 class FirebaseController extends Controller
 {
@@ -35,8 +36,40 @@ class FirebaseController extends Controller
 
     public function firebaseClient()
     {
-        $token = $this->_generateToken(1);
-        return view('firebase', ['token' => $token]);
+        $users = $this->_getlistUsers();
+        $token = $this->_generateToken(Auth::id());
+        return view('firebase', ['token' => $token, 'users' => $users]);
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $newMessage = $request['msg'];
+        if(!empty($request['msg'])){
+            $sendData = $this->_sendMessageToFirebase($newMessage);
+            return $sendData;
+        }
+        return \response()->json(['status' => 'Failed!']);
+    }
+
+    private function _sendMessageToFirebase(string $newMessage)
+    {
+        $data = [
+            'user_id' => Auth::id(),
+            'message' => $newMessage,
+            'time' => time() * 1000
+        ];
+        $sendData = $this->_database->getReference('ChatRoom')->push($data);
+        return \response()->json($sendData->getValue());
+    }
+
+    public function loadMessageFromFirebase()
+    {
+        $lastMessage = request()->lastMessage;
+        $messages = $this->_database->getReference('ChatRoom')->orderByKey()->endAt('-Lk7vIkjvQgEyI8rOMUx')->limitToLast(5)->getSnapshot()->getValue();
+        if(!empty($messages)) {
+            return  array_reverse($messages, true);
+        }
+        return "failed";
     }
 
     public function createUser()
@@ -55,9 +88,9 @@ class FirebaseController extends Controller
         return \response()->json($createdUser);
     }
 
-    public function createUserById()
+    public function createUserById($id)
     {
-        $user = User::find(1);
+        $user = User::find($id);
         $userProperties = [
             'uid' => $user->id,
             'email' => $user->email,
@@ -84,17 +117,34 @@ class FirebaseController extends Controller
 
     public function getListUsers()
     {
-        $users = $this->_auth->getListUsers($defaultMaxresults = 1000, $defaultBatchSize = 1000);
+        $users = $this->_getlistUsers();
+        return $users;
+    }
 
-        return \response()->json($users);
+    private function _getlistUsers()
+    {
+        $users = $this->_auth->listUsers($defaultMaxresults = 1000, $defaultBatchSize = 1000);
+        $data = [];
+        foreach ($users as $key =>  $user) {
+            $data[$key]['id'] = $user->uid;
+            $data[$key]['displayName'] = $user->displayName;
+            $data[$key]['email'] = $user->email;
+        }
+        return $data;
     }
 
     public function getUserInfo($id)
     {
         $user = $this->_auth->getUser($id);
-
         return \response()->json($user);
 
+    }
+
+    private function _hasUserOnFirebase($uid)
+    {
+        if($this->_auth->getUser($uid))
+            return true;
+        return false;
     }
 
     private function _generateToken($uid)
@@ -105,7 +155,7 @@ class FirebaseController extends Controller
         $customToken = $this->_auth->createCustomToken($uid, $additionalClaims);
         $customTokenString = (string) $customToken;
 
-        return \response()->json($customTokenString);
+        return $customTokenString;
     }
 
     private function _hasData($data)
@@ -113,5 +163,16 @@ class FirebaseController extends Controller
         if(empty($data) || !isset($data))
             return false;
         return true;
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return \redirect('/firebase');
+    }
+
+    public function testClient()
+    {
+        return view('firebase-client');
     }
 }
