@@ -44,20 +44,28 @@ class FirebaseController extends Controller
         return \response()->json($newPost->getValue());
     }
 
-    public function firebaseClient()
+    public function firebaseClient($id)
     {
         $userId = Auth::id();
+        if($id == 'ChatRoom') {
+            $key = 'ChatRoom';
+        } else {
+            if($userId > $id)
+                $key = 'Messages/' . $userId . '_' . $id;
+            $key = 'Messages/' . $id . '_' . $userId;
+        }
         $this->_initialFirebaseUser();
         $users = $this->_getlistUsers();
         $token = $this->_generateToken($userId);
-        return view('firebase', ['token' => $token, 'users' => $users]);
+        return view('firebase', ['token' => $token, 'users' => $users, 'key' => $key]);
     }
 
     public function sendMessage(Request $request)
     {
         $newMessage = $request['msg'];
+        $user_receive = $request['user_receive'];
         if(!empty($request['msg'])){
-            $sendData = $this->_sendMessageToFirebase($newMessage);
+            $sendData = $this->_sendMessageToFirebase($newMessage , $user_receive);
             return $sendData;
         }
         return \response()->json(['status' => 'Failed!']);
@@ -65,12 +73,20 @@ class FirebaseController extends Controller
 
     private function _sendMessageToFirebase(string $newMessage)
     {
+        $user_send = Auth::id();
         $data = [
-            'user_id' => Auth::id(),
+            'user_id' => $user_send,
             'message' => $newMessage,
             'time' => time() * 1000
         ];
-        $sendData = $this->_database->getReference('ChatRoom')->push($data);
+        if($user_receive == 'ChatRoom') {
+            $sendData = $this->_database->getReference('ChatRoom')->push($data);
+        } else {
+            if($user_send > $user_receive)
+                $key = 'Messages/' . $user_send . '_' . $user_receive;
+            $key = 'Messages/' . $user_receive . '_' . $user_send;
+            $sendData = $this->_database->getReference($key)->push($data);
+        }
         return \response()->json($sendData->getValue());
     }
 

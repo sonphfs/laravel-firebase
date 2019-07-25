@@ -28,7 +28,7 @@ Route::get('/firebase-client', 'FirebaseController@testClient');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/laravel-firebase','FirebaseController@index');
-    Route::get('/firebase', 'FirebaseController@firebaseClient');
+    Route::get('/firebase/{id}', 'FirebaseController@firebaseClient');
     Route::post('/send-message', 'FirebaseController@sendMessage');
     Route::get('/create-user', 'FirebaseController@createUser');
     Route::get('/create-user-by-id/{id}', 'FirebaseController@createUserById');

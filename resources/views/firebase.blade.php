@@ -42,7 +42,7 @@
                         </div>
                       </div>
                       <div class="inbox_chat">
-                        <div class="chat_list active_chat">
+                        <div class="chat_list active_chat" data-user="ChatRoom">
                           <div class="chat_people">
                             <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                             <div class="chat_ib">
@@ -54,7 +54,7 @@
                         </div>
                         @foreach ($users as $user)
                             @if($user['id'] != Auth::id())
-                                <div class="chat_list">
+                                <div class="chat_list" data-user="{{ $user['id'] }}">
                                     <div class="chat_people">
                                     <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                                     <div class="chat_ib">
@@ -86,9 +86,11 @@
                 <div style="text-align: center; margin-bottom: 50px;"><button class="btn" onclick="logout()">Logout Chatroom</button></div>
             </div>
             <input type="hidden" data-token="{{$token}}">
+            <input type="hidden" data-key="{{$key}}">
     <script>
         (function(){
             var token = $('input[type="hidden"]').data('token');
+            var key = $('input[type="hidden"]').data('key');
             const firebaseConfig = {
                 apiKey: "AIzaSyAYbwvoI-Qzw1p_yfeH6xGqzwHB6B8LRhM",
                 authDomain: "laravel-firebase-test-8a7ea.firebaseapp.com",
@@ -147,7 +149,7 @@
                 return firebase.database().ref().update(updates);
             }
 
-            var starCountRef = firebase.database().ref('ChatRoom');
+            var starCountRef = firebase.database().ref(key);
             var page = 1;
             var per_page = 2;
             var lastKey = 'aa';

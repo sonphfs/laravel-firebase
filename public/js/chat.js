@@ -1,5 +1,6 @@
 $('document').ready(function(){
-
+    var user_receive;
+    var baseUrl = window.location.protocol + "//" + window.location.host;
     $.ajaxSetup({
         headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -7,7 +8,6 @@ $('document').ready(function(){
       });
     $('#chat-msg').keypress(function(){
         let keycode = event.which;
-        var baseUrl = window.location.protocol + "//" + window.location.host;
         if(keycode == '13'){
             let msg = $('#chat-msg').val();
             $('#chat-msg').val('');
@@ -15,7 +15,8 @@ $('document').ready(function(){
                 type: 'post',
                 url: baseUrl + '/send-message',
                 data: {
-                    "msg" : msg
+                    "msg" : msg,
+                    "user_receive" : user_receive
                 },
                 success: function(result){
                     console.log('OK');
@@ -33,4 +34,9 @@ $('document').ready(function(){
             // console.log('down 1');
         }
     });
+
+    $('.chat_list').click(function(e){
+        user_receive = $(this).data('user');
+        window.location.replace(baseUrl + '/firebase/' + user_receive);
+    })
 });
