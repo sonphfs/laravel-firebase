@@ -9,6 +9,7 @@ use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Database;
 use App\User;
 use Auth;
+use App\Helpers\FirebaseHelper;
 
 class FirebaseController extends Controller
 {
@@ -27,6 +28,15 @@ class FirebaseController extends Controller
         $this->_database = $this->_firebase->getDatabase();
     }
 
+    private function _initialFirebaseUser()
+    {
+        $userId = Auth::id();
+        $email = Auth::user()->email;
+        if(!FirebaseHelper::checkUserOnFirebase($this->_auth, $email)) {
+            $this->_createUserById($userId);
+        }
+    }
+
     public function index()
     {
         $newPost = $this->_database->getReference('blog/posts')->push(['title'=>'Post title', 'body'=>'This should probably be longer']);
@@ -36,8 +46,10 @@ class FirebaseController extends Controller
 
     public function firebaseClient()
     {
+        $userId = Auth::id();
+        $this->_initialFirebaseUser();
         $users = $this->_getlistUsers();
-        $token = $this->_generateToken(Auth::id());
+        $token = $this->_generateToken($userId);
         return view('firebase', ['token' => $token, 'users' => $users]);
     }
 
@@ -89,6 +101,11 @@ class FirebaseController extends Controller
     }
 
     public function createUserById($id)
+    {
+        return $this->_createUserById($id);
+    }
+
+    private function _createUserById($id)
     {
         $user = User::find($id);
         $userProperties = [
