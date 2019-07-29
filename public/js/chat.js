@@ -1,6 +1,8 @@
 $('document').ready(function(){
     var user_receive;
     var baseUrl = window.location.protocol + "//" + window.location.host;
+    arr = window.location.href.split('/');
+    user_receive = arr[4];
     $.ajaxSetup({
         headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -34,7 +36,7 @@ $('document').ready(function(){
             // console.log('down 1');
         }
     });
-
+    console.log(user_receive);
     $('.chat_list').click(function(e){
         user_receive = $(this).data('user');
         window.location.replace(baseUrl + '/firebase/' + user_receive);

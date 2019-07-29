@@ -46,9 +46,8 @@
                           <div class="chat_people">
                             <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                             <div class="chat_ib">
-                              <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                              <p>Test, which is a new approach to have all solutions
-                                astrology under one roof.</p>
+                            <h5> General <span class="chat_date">{{ date("Y/m/d") }}</span></h5>
+                              <p>Ren nơ rồ</p>
                             </div>
                           </div>
                         </div>
@@ -86,11 +85,12 @@
                 <div style="text-align: center; margin-bottom: 50px;"><button class="btn" onclick="logout()">Logout Chatroom</button></div>
             </div>
             <input type="hidden" data-token="{{$token}}">
-            <input type="hidden" data-key="{{$key}}">
+            <input class="key-fr" type="hidden" data-key="{{$key}}">
     <script>
         (function(){
             var token = $('input[type="hidden"]').data('token');
-            var key = $('input[type="hidden"]').data('key');
+            var key = $('.key-fr').data('key');
+            console.log(key);
             const firebaseConfig = {
                 apiKey: "AIzaSyAYbwvoI-Qzw1p_yfeH6xGqzwHB6B8LRhM",
                 authDomain: "laravel-firebase-test-8a7ea.firebaseapp.com",
@@ -272,7 +272,7 @@
         var isToday = function(timetamp){
             var date = new Date(timetamp);
             var today = new Date();
-            return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear() ? "|  Today" : "";
+            return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear() ? "   |  Today" : "";
         }
 
         var getTime = function(timetamp) {

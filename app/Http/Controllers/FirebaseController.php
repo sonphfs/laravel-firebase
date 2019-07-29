@@ -47,16 +47,10 @@ class FirebaseController extends Controller
     public function firebaseClient($id)
     {
         $userId = Auth::id();
-        if($id == 'ChatRoom') {
-            $key = 'ChatRoom';
-        } else {
-            if($userId > $id)
-                $key = 'Messages/' . $userId . '_' . $id;
-            $key = 'Messages/' . $id . '_' . $userId;
-        }
         $this->_initialFirebaseUser();
         $users = $this->_getlistUsers();
         $token = $this->_generateToken($userId);
+        $key = $this->_getFirebaseDataKey($id, $userId);
         return view('firebase', ['token' => $token, 'users' => $users, 'key' => $key]);
     }
 
@@ -71,7 +65,20 @@ class FirebaseController extends Controller
         return \response()->json(['status' => 'Failed!']);
     }
 
-    private function _sendMessageToFirebase(string $newMessage)
+    private function _getFirebaseDataKey($user_receive, $userId)
+    {
+        $key = "";
+        if($user_receive == 'ChatRoom') {
+            $key = "ChatRoom";
+        } else {
+            if($userId > $user_receive)
+                $key = 'Messages/' . $userId . '_' . $user_receive;
+            $key = 'Messages/' . $user_receive . '_' . $userId;
+        }
+        return $key;
+    }
+
+    private function _sendMessageToFirebase(string $newMessage, $user_receive)
     {
         $user_send = Auth::id();
         $data = [
@@ -79,21 +86,16 @@ class FirebaseController extends Controller
             'message' => $newMessage,
             'time' => time() * 1000
         ];
-        if($user_receive == 'ChatRoom') {
-            $sendData = $this->_database->getReference('ChatRoom')->push($data);
-        } else {
-            if($user_send > $user_receive)
-                $key = 'Messages/' . $user_send . '_' . $user_receive;
-            $key = 'Messages/' . $user_receive . '_' . $user_send;
-            $sendData = $this->_database->getReference($key)->push($data);
-        }
+        $key = $this->_getFirebaseDataKey($user_receive, $user_send);
+        $sendData = $this->_database->getReference($key)->push($data);
+
         return \response()->json($sendData->getValue());
     }
 
     public function loadMessageFromFirebase()
     {
         $lastMessage = request()->lastMessage;
-        $messages = $this->_database->getReference('ChatRoom')->orderByKey()->endAt('-Lk7vIkjvQgEyI8rOMUx')->limitToLast(5)->getSnapshot()->getValue();
+        $messages = $this->_database->getReference('ChatRoom')->getSnapshot()->getValue();
         if(!empty($messages)) {
             return  array_reverse($messages, true);
         }
