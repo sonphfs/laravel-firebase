@@ -26,6 +26,8 @@ Route::get('/check', function(){
 });
 Route::get('/firebase-client', 'FirebaseController@testClient');
 
+Route::get('/firebase-v2', 'V2\FirebaseController@firebase');
+
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/laravel-firebase','FirebaseController@index');
     Route::get('/firebase/{id}', 'FirebaseController@firebaseClient');
