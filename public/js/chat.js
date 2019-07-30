@@ -21,7 +21,7 @@ $('document').ready(function(){
                     "user_receive" : user_receive
                 },
                 success: function(result){
-                    console.log('OK');
+                    console.log(result);
                 }
             });
         }
@@ -41,4 +41,28 @@ $('document').ready(function(){
         user_receive = $(this).data('user');
         window.location.replace(baseUrl + '/firebase/' + user_receive);
     })
+
+    $('.upload-file').change(function(){
+        var file;
+        var formData;
+        if($(this).prop('files').length > 0) {
+            formData =  new FormData();
+            file = $(this).prop('files')[0];
+            formData.append('fileUpload', file);
+            formData.append('user_receive', user_receive);
+            $.ajax({
+                type: 'post',
+                url: baseUrl + '/send-message',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(result){
+                    console.log(result);
+                },
+                error: function(result){
+                    console.log(result);
+                }
+            });
+        }
+    });
 });

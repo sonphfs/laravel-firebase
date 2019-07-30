@@ -74,7 +74,7 @@
                       <div class="type_msg">
                         <div class="input_msg_write">
                           <input id="chat-msg" type="text" class="write_msg" placeholder="Type a message" />
-                          <button id="send-msg-btn" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                          <button id="send-msg-btn" class="msg_send_btn" type="button"><input class="upload-file" name="file-upload" type="file"  style="opacity: 0;"><i class="fa fa-paper-plane-o"></i></button>
                         </div>
                       </div>
                     </div>
@@ -90,6 +90,7 @@
         (function(){
             var token = $('input[type="hidden"]').data('token');
             var key = $('.key-fr').data('key');
+            var baseUrl = window.location.protocol + "//" + window.location.host;
             console.log(key);
             const firebaseConfig = {
                 apiKey: "AIzaSyAYbwvoI-Qzw1p_yfeH6xGqzwHB6B8LRhM",
@@ -171,7 +172,6 @@
                                             <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                                                 <div class="received_msg">
                                                     <div class="received_withd_msg">
-                                                        <p>` + data.message + `</p>
                                                 <span class="time_date"> ` + getTime(data.time) + `     | ` + isToday(data.time) +`</span>
                                                 </div>
                                             </div>
@@ -194,7 +194,14 @@
                     currentId = firebase.auth().currentUser.uid;
                     var data = snapshot.val();
                     arrMessages.push(data);
-                    displayMessage(data, currentId);
+                    console.log(data);
+                    if(data.message) {
+                        displayMessage(data, currentId);
+                    }
+                    if(data.file_name) {
+                        console.log(data.file)
+                        displayFile(data, currentId);
+                    }
                     // ref.off();
                 });
                 console.log(arrMessages);
@@ -221,6 +228,32 @@
                                                 <div class="received_withd_msg">
                                                     <p>` + data.message + `</p>
                                             <span class="time_date"> ` + getTime(data.time) + isToday(data.time) +`</span>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                    $('.msg_history').append(incoming_msg);
+                }
+                $('.msg_history')[0].scrollTop = $('.msg_history')[0].scrollHeight;
+            }
+
+            var displayFile = function(data, currentId){
+                var outgoing_msg;
+                var incoming_msg;
+                if(currentId == data.user_id){
+                    outgoing_msg = `<div class="outgoing_msg">
+                                        <div class="sent_msg">
+                                            <img src="` + baseUrl + "/uploads/" + data.file_name +`">
+                                        <span class="time_date" style="color: #000">` + getTime(data.time) + isToday(data.time) +`</span> </div>
+                                    </div>`;
+                    $('.msg_history').append(outgoing_msg);
+                }
+                else {
+                    incoming_msg = `<div class="incoming_msg">
+                                        <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                            <div class="received_msg">
+                                                <div class="received_withd_msg">
+                                                <img src=" ` + baseUrl + "/uploads/" + data.file_name +`">
+                                                <span class="time_date"> ` + getTime(data.time) + isToday(data.time) +`</span>
                                             </div>
                                         </div>
                                     </div>`;

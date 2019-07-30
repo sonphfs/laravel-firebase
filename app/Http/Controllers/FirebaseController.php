@@ -58,11 +58,28 @@ class FirebaseController extends Controller
     {
         $newMessage = $request['msg'];
         $user_receive = $request['user_receive'];
+        if($request->hasFile('fileUpload')) {
+            $data = [];
+            $file = $request->fileUpload;
+            $data = [
+                'file_name' => $file->getClientOriginalName(),
+                'ets' =>  $file->getClientOriginalExtension(),
+                'name' => $file->getFileName(),
+                'path' => $file->getRealPath(),
+                'size' => $file->getSize(),
+                'type' => $file->getMimeType()
+            ];
+            $path = 'uploads';
+            $fileName = $file->getFileName().'.'.$file->getClientOriginalExtension();
+            $file->move($path, $fileName);
+            $sendData = $this->_sendMessageToFirebase($fileName , $user_receive, true);
+            return response()->json($sendData);
+        }
         if(!empty($request['msg'])){
             $sendData = $this->_sendMessageToFirebase($newMessage , $user_receive);
             return $sendData;
         }
-        return \response()->json(['status' => 'Failed!']);
+        return \response()->json(['status' => $request->hasFile('file-upload')]);
     }
 
     private function _getFirebaseDataKey($user_receive, $userId)
@@ -78,14 +95,22 @@ class FirebaseController extends Controller
         return $key;
     }
 
-    private function _sendMessageToFirebase(string $newMessage, $user_receive)
+    private function _sendMessageToFirebase(string $newMessage, $user_receive, $send_file = false)
     {
         $user_send = Auth::id();
-        $data = [
-            'user_id' => $user_send,
-            'message' => $newMessage,
-            'time' => time() * 1000
-        ];
+        if($send_file) {
+            $data = [
+                'user_id' => $user_send,
+                'file_name' => $newMessage,
+                'time' => time() * 1000
+            ];
+        } else {
+            $data = [
+                'user_id' => $user_send,
+                'message' => $newMessage,
+                'time' => time() * 1000
+            ];
+        }
         $key = $this->_getFirebaseDataKey($user_receive, $user_send);
         $sendData = $this->_database->getReference($key)->push($data);
 
