@@ -77,9 +77,9 @@ class FirebaseController extends Controller
         }
         if(!empty($request['msg'])){
             $sendData = $this->_sendMessageToFirebase($newMessage , $user_receive);
-            return $sendData;
+            return \response()->json($sendData);
         }
-        return \response()->json(['status' => $request->hasFile('file-upload')]);
+        return \response()->json(['status' => 'Failed!']);
     }
 
     private function _getFirebaseDataKey($user_receive, $userId)

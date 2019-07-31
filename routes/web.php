@@ -26,7 +26,6 @@ Route::get('/check', function(){
 });
 Route::get('/firebase-client', 'FirebaseController@testClient');
 
-Route::get('/firebase-v2', 'V2\FirebaseController@firebase');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/laravel-firebase','FirebaseController@index');
@@ -40,4 +39,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/list-users', 'FirebaseController@getListUsers');
     Route::get('/logout', 'FirebaseController@logout');
     Route::get('/load-message-from-firebase', 'FirebaseController@loadMessageFromFirebase');
+
+    //v2 hihi
+    Route::get('/firebase-v1', 'V1\FirebaseController@group');
+    Route::get('/firebase-v1/add-member', 'V1\FirebaseController@addMember');
+    Route::post('/firebase-v1/send-message-group', 'V1\FirebaseController@sendMessageGroup');
+    Route::get('/firebase-v1/log', 'V1\FirebaseController@log');
 });
