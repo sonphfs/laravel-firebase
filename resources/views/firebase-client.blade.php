@@ -12,8 +12,8 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <!-- Add Firebase products that you want to use -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo asset('css/chat-template.css')?>" type="text/css">
-    <script src="<?php echo asset('js/chat.js')?>"></script>
+    <link rel="stylesheet" href="https://serene-eyrie-27492.herokuapp.com/css/chat-template.css" type="text/css">
+    <script src="https://serene-eyrie-27492.herokuapp.com/v1/js/chat.js"></script>
 
     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />

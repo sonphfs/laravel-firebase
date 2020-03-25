@@ -17,8 +17,8 @@
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo asset('css/chat-template.css')?>" type="text/css">
-    <script src="<?php echo asset('js/chat.js')?>"></script>
+    <link rel="stylesheet" href="https://serene-eyrie-27492.herokuapp.com/css/chat-template.css" type="text/css">
+    <script src="https://serene-eyrie-27492.herokuapp.com/v1/js/chat.js"></script>
 </head>
 <body>
     <div id="messgesDiv">
