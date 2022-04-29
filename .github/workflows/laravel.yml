@@ -1,0 +1,16 @@
+stages:
+    - build
+    - test
+cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths: 
+    - vendor/
+composer-install:
+    stage: build
+    image: composer:1.9.3
+    script: 'composer install'
+test:
+    stage: test
+    image: php:7.1-cli
+    script: 
+        - 'vendor/bin/phpunit'
